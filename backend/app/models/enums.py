@@ -43,3 +43,16 @@ class BloodType(str, enum.Enum):
     AB_NEG = "AB-"
     O_POS = "O+"
     O_NEG = "O-"
+
+
+def enum_values(enum_cls):
+    """
+    Pass as values_callable=enum_values to sa.Enum(SomeEnum, ...).
+
+    SQLAlchemy's Enum column defaults to storing the Python member's *name*
+    (e.g. "BOTH"), not its *value* (e.g. "both"). Our Postgres enum types
+    (created in the Alembic migration) only accept the lowercase values, so
+    without this every insert/update on an enum column fails with
+    "invalid input value for enum ...".
+    """
+    return [e.value for e in enum_cls]

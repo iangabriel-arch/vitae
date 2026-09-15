@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.core.database import Base
-from app.models.enums import BloodType, RequestStatus, UrgencyLevel
+from app.models.enums import BloodType, RequestStatus, UrgencyLevel, enum_values
 
 
 class BloodRequest(Base):
@@ -16,14 +16,22 @@ class BloodRequest(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     requester_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
 
-    blood_type_needed = Column(Enum(BloodType), nullable=False)
+    blood_type_needed = Column(Enum(BloodType, values_callable=enum_values), nullable=False)
     units_needed = Column(Integer, nullable=False, default=1)
-    urgency = Column(Enum(UrgencyLevel), nullable=False, default=UrgencyLevel.MEDIUM)
+    urgency = Column(
+        Enum(UrgencyLevel, values_callable=enum_values),
+        nullable=False,
+        default=UrgencyLevel.MEDIUM,
+    )
 
     hospital_name = Column(String, nullable=False)
     location_area = Column(String, nullable=False)
 
-    status = Column(Enum(RequestStatus), default=RequestStatus.OPEN, nullable=False)
+    status = Column(
+        Enum(RequestStatus, values_callable=enum_values),
+        default=RequestStatus.OPEN,
+        nullable=False,
+    )
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(DateTime(timezone=True), nullable=True)
 

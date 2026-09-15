@@ -17,15 +17,19 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 blood_type_enum = postgresql.ENUM(
-    "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", name="bloodtype"
+    "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", name="bloodtype", create_type=False
 )
-user_role_enum = postgresql.ENUM("donor", "requester", "both", "admin", name="userrole")
+user_role_enum = postgresql.ENUM(
+    "donor", "requester", "both", "admin", name="userrole", create_type=False
+)
 request_status_enum = postgresql.ENUM(
-    "open", "fulfilled", "expired", "cancelled", name="requeststatus"
+    "open", "fulfilled", "expired", "cancelled", name="requeststatus", create_type=False
 )
-urgency_level_enum = postgresql.ENUM("low", "medium", "high", "critical", name="urgencylevel")
+urgency_level_enum = postgresql.ENUM(
+    "low", "medium", "high", "critical", name="urgencylevel", create_type=False
+)
 match_status_enum = postgresql.ENUM(
-    "notified", "accepted", "declined", "donated", "expired", name="matchstatus"
+    "notified", "accepted", "declined", "donated", "expired", name="matchstatus", create_type=False
 )
 
 

@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.core.database import Base
-from app.models.enums import MatchStatus
+from app.models.enums import MatchStatus, enum_values
 
 
 class DonorMatch(Base):
@@ -21,7 +21,11 @@ class DonorMatch(Base):
     request_id = Column(UUID(as_uuid=True), ForeignKey("blood_requests.id"), nullable=False)
     donor_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
 
-    status = Column(Enum(MatchStatus), default=MatchStatus.NOTIFIED, nullable=False)
+    status = Column(
+        Enum(MatchStatus, values_callable=enum_values),
+        default=MatchStatus.NOTIFIED,
+        nullable=False,
+    )
     notified_at = Column(DateTime(timezone=True), server_default=func.now())
     responded_at = Column(DateTime(timezone=True), nullable=True)
 

@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.core.database import Base
-from app.models.enums import BloodType, UserRole
+from app.models.enums import BloodType, UserRole, enum_values
 
 
 class User(Base):
@@ -22,7 +22,7 @@ class User(Base):
     phone = Column(String, unique=True, nullable=True)
     password_hash = Column(String, nullable=False)
 
-    blood_type = Column(Enum(BloodType), nullable=True)
+    blood_type = Column(Enum(BloodType, values_callable=enum_values), nullable=True)
     # Stays unverified until lab-confirmed — see "Verification risk" in the plan.
     blood_type_verified = Column(Boolean, default=False, nullable=False)
 
@@ -30,7 +30,7 @@ class User(Base):
     location_area = Column(String, nullable=True)
     last_donation_date = Column(DateTime(timezone=True), nullable=True)
 
-    role = Column(Enum(UserRole), default=UserRole.BOTH, nullable=False)
+    role = Column(Enum(UserRole, values_callable=enum_values), default=UserRole.BOTH, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships

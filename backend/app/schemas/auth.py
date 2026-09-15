@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 from app.models.enums import BloodType, UserRole
 
@@ -7,7 +7,9 @@ class RegisterRequest(BaseModel):
     name: str
     email: EmailStr
     phone: str | None = None
-    password: str
+    # max_length=72 matches bcrypt's hard input limit — reject clearly at
+    # the API boundary instead of silently truncating in hash_password.
+    password: str = Field(min_length=8, max_length=72)
     blood_type: BloodType | None = None
     location_area: str | None = None
     role: UserRole = UserRole.BOTH
@@ -15,7 +17,7 @@ class RegisterRequest(BaseModel):
 
 class LoginRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(max_length=72)
 
 
 class TokenResponse(BaseModel):
