@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from app.models.enums import BloodType, UserRole
 
@@ -13,6 +13,18 @@ class RegisterRequest(BaseModel):
     blood_type: BloodType | None = None
     location_area: str | None = None
     role: UserRole = UserRole.BOTH
+
+    @field_validator("role")
+    @classmethod
+    def reject_admin_self_registration(cls, value: UserRole) -> UserRole:
+        # Public registration must never grant ADMIN. There's currently no
+        # promotion path (no endpoint, no seed script) — that's a
+        # deliberate gap until there's an actual need for a second admin,
+        # rather than building unused machinery now. Until then, admin
+        # accounts are created directly in the database.
+        if value == UserRole.ADMIN:
+            raise ValueError("Cannot self-register as admin")
+        return value
 
 
 class LoginRequest(BaseModel):
