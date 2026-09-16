@@ -143,4 +143,4 @@ def downgrade() -> None:
     urgency_level_enum.drop(bind, checkfirst=True)
     request_status_enum.drop(bind, checkfirst=True)
     user_role_enum.drop(bind, checkfirst=True)
-    blood_type_enum.drop(bind, checkfirst=True)
+    blood_type_enum.drop(bind, checkfirst=True)cd ~/vitae/backend
