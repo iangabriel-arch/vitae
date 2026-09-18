@@ -10,11 +10,11 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.models.blood_request import BloodRequest
-from app.models.donation import Donation
 from app.models.donor_match import DonorMatch
 from app.models.enums import MatchStatus, UserRole
 from app.models.user import User
 from app.schemas.donor_match import DonorMatchRead, DonorMatchRespond
+from app.services.donations import record_donation
 
 router = APIRouter(tags=["matches"])
 
@@ -102,13 +102,14 @@ def complete_match(
     # A single whole-blood donation is always 1 unit regardless of how many
     # units the request needed in total — units_needed can require several
     # separate donors/donations to fulfill.
-    donation = Donation(
-        donor_id=match.donor_id,
-        request_id=match.request_id,
+    donor = db.get(User, match.donor_id)
+    record_donation(
+        db,
+        donor=donor,
         blood_bank_name=blood_request.hospital_name if blood_request else "Unknown",
+        request_id=match.request_id,
         units_donated=1,
     )
-    db.add(donation)
 
     db.commit()
     db.refresh(match)
